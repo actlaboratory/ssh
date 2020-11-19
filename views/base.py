@@ -83,11 +83,17 @@ class BaseView(object):
 		self.hFrame.SetAcceleratorTable(t)
 
 class BaseMenu(object):
-	def __init__(self,identifier):
+	def __init__(self,identifier,*,keyFilter=None):
 		"""メニューバー・acceleratorTable登録準備"""
 		self.hMenuBar=wx.MenuBar()
-		self.keymap=keymap.KeymapHandler(defaultKeymap.defaultKeymap,keymap.KeyFilter().SetDefault(False,True))
+		if keyFilter==None:
+			keyFilter=keymap.KeyFilter().SetDefault(False,True)
+		self.keymap=keymap.KeymapHandler(defaultKeymap.defaultKeymap, keyFilter)
 		self.keymap_identifier=identifier
+
+
+		self.keymap.filter=keyFilter
+
 		self.keymap.addFile(constants.KEYMAP_FILE_NAME)
 		errors=self.keymap.GetError(identifier)
 		if errors:
@@ -97,8 +103,7 @@ class BaseMenu(object):
 			dialog(_("エラー"),tmp)
 		self.acceleratorTable=self.keymap.GetTable(self.keymap_identifier)
 
-		#これ以降はユーザ設定の追加なのでフィルタを変更
-		self.keymap.filter=keymap.KeyFilter().SetDefault(False,False)
+
 
 	def RegisterMenuCommand(self,menu_handle,ref_id,title="",subMenu=None,index=-1):
 		if type(ref_id)==dict:

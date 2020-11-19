@@ -478,15 +478,21 @@ class KeyFilter:
 		self.AddDisablePattern("ALT+SHIFT+SNAPSHOT")		#ハイコントラストの切り替え
 		self.AddDisablePattern("ALT+ESCAPE")				#最前面ウィンドウの最小化
 
-	def SetDefault(self,supportInputChar,isSystem):
+	def SetDefault(self,supportInputChar,isSystem,arrowCharKey=False):
 		"""
 			フィルタを一般的な設定に構成します。
+
 			supportInputCharには、そのウィンドウでの文字入力の可否を設定します。
+			ここでTrueを設定すると、Home,BS,Enterなど文字入力と競合する修飾キーを単体でショートカットとして利用可能になります。
 
 			isSystemには、システム内部で設定する場合にはTrue、ユーザが独自で設定する場合にはFalseを指定します。
 			ユーザが独自にキーをカスタマイズする場合に、指定することが望ましくないキーの組み合わせをブロックします。
 			将来、開発者が機能拡張する際の問題を和らげることを目的としています。
 			なお、開発者であってもコメントで記した目的以外に利用することは避けるべきです。
+
+			arrowCharKeyには、原則Falseを指定します。
+			ここでTrueを設定すると英数字や各種記号文字のキーを単体でショートカットキーとして利用可能になります。
+			ただし、各種コントロールのインクリメンタルサーチ等と競合するため、この設定は推奨されません。
 		"""
 		self.modifierKey.add("CTRL")
 		self.modifierKey.add("ALT")
@@ -494,7 +500,6 @@ class KeyFilter:
 
 		self.functionKey|=str2FunctionKey.keys()
 		self.functionKey|=str2SpecialKey.keys()
-		self.noShiftEnableKey|=str2CharactorKey.keys()
 
 		if supportInputChar:
 			#文字入力に関わる共通のショートカットは設定不可
@@ -525,6 +530,11 @@ class KeyFilter:
 			self.AddDisablePattern("ALT+F4")					#アプリケーションの終了
 			self.AddDisablePattern("ALT+SPACE")				#リストビュー等で全ての選択を解除
 			self.enableKey|=str2StandaloneKey.keys()
+
+		if arrowCharKey:
+			self.functionKey|=str2CharactorKey.keys()
+		else:
+			self.noShiftEnableKey|=str2CharactorKey.keys()
 
 		return self
 
