@@ -40,7 +40,7 @@ class MainView(BaseView):
 			self.app.config.getint(self.identifier,"positionX",50,0),
 			self.app.config.getint(self.identifier,"positionY",50,0)
 		)
-		self.InstallMenuEvent(Menu(self.identifier),self.events.OnMenuSelect)
+		self.InstallMenuEvent(Menu(self.identifier,keyFilter=keymap.KeyFilter().SetDefault(False,True,True)),self.events.OnMenuSelect)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_START"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_STOP"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_RESET"), False)
