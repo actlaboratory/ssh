@@ -1,0 +1,5 @@
+﻿wxpython
+pywin32
+winpaths
+pyinstaller
+https://github.com/actlaboratory/soundPlayer/archive/0.1.0.zip
