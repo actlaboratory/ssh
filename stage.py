@@ -12,14 +12,24 @@ class stage(customList.customList):
 	def __init__(self, *args):
 		super().__init__(*args)
 		self.started = False
+
 	def start_stage(self):
 		self.started = True
 		self.current.start()
+
 	def setNext(self):
 		if len(self) == self.pointer+1:
 			return False
 		self.current.stop()
 		self.pointer += 1
+		self.current.start()
+		return True
+
+	def setprevious(self):
+		if self.pointer -1 == -1:
+			return False
+		self.current.stop()
+		self.pointer -= 1
 		self.current.start()
 		return True
 

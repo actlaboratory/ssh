@@ -44,6 +44,7 @@ class MainView(BaseView):
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_START"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_STOP"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_RESET"), False)
+		self.menu.hFileMenu.Enable(menuItemsStore.getRef("SEEN_RESET"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("SAVE_STAGE"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("SAVE_EXIST_STAGE"), False)
 		self.menu.hFileMenu.Enable(menuItemsStore.getRef("EDIT_STAGE"), False)
@@ -64,6 +65,7 @@ class Menu(BaseMenu):
 		self.RegisterMenuCommand(self.hFileMenu, "STAGE_START", _("スタート"))
 		self.RegisterMenuCommand(self.hFileMenu, "STAGE_STOP", _("ストップ"))
 		self.RegisterMenuCommand(self.hFileMenu, "STAGE_RESET", _("最初に戻る(&r)"))
+		self.RegisterMenuCommand(self.hFileMenu, "SEEN_RESET", _("シーンの最初に戻る(&b)"))
 		self.RegisterMenuCommand(self.hFileMenu, "SAVE_STAGE", _("名前を付けて保存(&s)"))
 		self.RegisterMenuCommand(self.hFileMenu, "SAVE_EXIST_STAGE", _("上書き保存(&s)"))
 		self.RegisterMenuCommand(self.hFileMenu, "EDIT_STAGE", _("ステージの編集"))
@@ -71,6 +73,7 @@ class Menu(BaseMenu):
 
 		#コントロールメニューの中身
 		self.RegisterMenuCommand(self.hCtrlMenu, "NEXTSEEN", _("次のシーン"))
+		self.RegisterMenuCommand(self.hCtrlMenu, "PREVSEEN", _("前のシーン"))
 		self.RegisterMenuCommand(self.hCtrlMenu, "PLAY_BGM", _("bgm再生"))
 		self.RegisterMenuCommand(self.hCtrlMenu, "FX_PLAY", _("効果音再生"))
 		self.RegisterMenuCommand(self.hCtrlMenu, "STOP_BGM", _("BGM停止"))
@@ -117,6 +120,7 @@ class Events(BaseEvents):
 				return
 			globalVars.stage.start_stage()
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_RESET"), True)
+			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("SEEN_RESET"), True)
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_START"), False)
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_STOP"), True)
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("EDIT_STAGE"), False)
@@ -124,6 +128,7 @@ class Events(BaseEvents):
 		if selected == menuItemsStore.getRef("STAGE_STOP"):
 			globalVars.stage.stop()
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_RESET"), False)
+			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("SEEN_RESET"), False)
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_START"), True)
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("STAGE_STOP"), False)
 			self.parent.menu.hFileMenu.Enable(menuItemsStore.getRef("SAVE_STAGE"), True)
@@ -144,6 +149,9 @@ class Events(BaseEvents):
 			self.Exit()
 		if selected == menuItemsStore.getRef("NEXTSEEN"):
 			globalVars.stage.setNext()
+
+		if selected == menuItemsStore.getRef("PREVSEEN"):
+			globalVars.stage.setprevious()
 
 		if selected == menuItemsStore.getRef("STOP_BGM"):
 			globalVars.stage.current.stopBgm()

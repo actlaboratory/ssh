@@ -53,7 +53,6 @@ class Dialog(BaseDialog):
 		self.seens.Clear()
 		for seen in globalVars.stage:
 			text = ""
-			print(seen)
 			text += "id:%d;" % globalVars.stage.index(seen)
 			text += "説明:%s;" % (seen.title,)
 			if seen.bgm == "":
