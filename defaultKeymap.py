@@ -11,7 +11,8 @@ defaultKeymap["mainView"]={
 	"FX_PLAY": "CTRL+D",
 	"STOP_FX": "CTRL+F",
 	"STOP_BGM": "CTRL+G",
-	
+	"BGM_VOLUME_DOWN": "DOWNARROW",
+	"BGM_VOLUME_UP": "UPARROW",
 }
 
 defaultKeymap["fxList"] = {

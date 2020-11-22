@@ -25,6 +25,7 @@ class Dialog(BaseDialog):
 		self.creator=views.ViewCreator.ViewCreator(self.viewMode,self.panel,self.sizer,wx.VERTICAL,20)
 		self.seens, dummy = self.creator.listbox(_("シーン一覧"), event = self.onSeenSelected)
 		self.addButton = self.creator.button(_("シーンを追加"), self.add)
+		self.insertButton = self.creator.button(_("選択位置にシーンを挿入"), self.onInsertSeen)
 		self.editButton = self.creator.button(_("編集"), self.edit)
 		self.deleteButton = self.creator.button(_("削除"), self.onDelete)
 		self.editButton.Disable()
@@ -38,6 +39,16 @@ class Dialog(BaseDialog):
 		globalVars.stage.append(dialog.GetValue())
 		self.update()
 		return
+
+	def onInsertSeen(self, event):
+		if self.seens.Selection == -1:
+			return
+		dialog = mkSeen.Dialog()
+		dialog.Initialize()
+		if dialog.Show() == wx.ID_CANCEL:
+			return
+		globalVars.stage.insert(self.seens.Selection, dialog.GetValue())
+		self.update()
 
 	def edit(self, event):
 		select = self.seens.GetSelection()

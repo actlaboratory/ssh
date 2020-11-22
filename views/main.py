@@ -13,7 +13,7 @@ import pywintypes
 import stage
 import simpleDialog
 from views import stage_manager
-
+from views import changeDevice
 import constants
 import errorCodes
 import globalVars
@@ -58,6 +58,7 @@ class Menu(BaseMenu):
 		#メニューの大項目を作る
 		self.hFileMenu = wx.Menu()
 		self.hCtrlMenu = wx.Menu()
+		self.hSettingsMenu = wx.Menu()
 		self.hHelpMenu=wx.Menu()
 		#ファイルメニューの中身
 		self.RegisterMenuCommand(self.hFileMenu, "NEW", _("新規(&n)"))
@@ -77,11 +78,16 @@ class Menu(BaseMenu):
 		self.RegisterMenuCommand(self.hCtrlMenu, "PLAY_BGM", _("bgm再生"))
 		self.RegisterMenuCommand(self.hCtrlMenu, "FX_PLAY", _("効果音再生"))
 		self.RegisterMenuCommand(self.hCtrlMenu, "STOP_BGM", _("BGM停止"))
+		self.RegisterMenuCommand(self.hCtrlMenu, "BGM_VOLUME_DOWN", _("BGMの音量を下げる"))
+		self.RegisterMenuCommand(self.hCtrlMenu, "BGM_VOLUME_UP", _("BGMの音量を上げる"))
+		#設定メニューの中身
+		self.RegisterMenuCommand(self.hSettingsMenu, "CHANGE_DEVICE", _("デバイスの変更"))
 		#ヘルプメニューの中身
 		self.RegisterMenuCommand(self.hHelpMenu,"EXAMPLE",_("テストダイアログを閲覧"))
 		#メニューバーの生成
 		self.hMenuBar.Append(self.hFileMenu, _("ファイル(&f)"))
 		self.hMenuBar.Append(self.hCtrlMenu,_("コントロール"))
+		self.hMenuBar.Append(self.hSettingsMenu,_("設定"))
 		self.hMenuBar.Append(self.hHelpMenu,_("ヘルプ"))
 		target.SetMenuBar(self.hMenuBar)
 
@@ -137,6 +143,9 @@ class Events(BaseEvents):
 		if selected == menuItemsStore.getRef("STAGE_RESET"):
 			globalVars.stage.reset()
 			return
+		if selected == menuItemsStore.getRef("SEEN_RESET"):
+			globalVars.stage.current.stop()
+			globalVars.stage.current.start()
 		if selected == menuItemsStore.getRef("EDIT_STAGE"):
 			if not hasattr(globalVars, "stage"):
 				simpleDialog.errorDialog("ステージがロードされていません。")
@@ -157,8 +166,20 @@ class Events(BaseEvents):
 			globalVars.stage.current.stopBgm()
 		if selected == menuItemsStore.getRef("PLAY_BGM"):
 			globalVars.stage.current.playBgm()
+		if selected == menuItemsStore.getRef("BGM_VOLUME_DOWN"):
+			globalVars.bgmPlayer.setVolumeByDiff(-1)
+		if selected == menuItemsStore.getRef("BGM_VOLUME_UP"):
+			globalVars.bgmPlayer.setVolumeByDiff(1)
 		if selected == menuItemsStore.getRef("FX_PLAY"):
 			globalVars.stage.current.playFx()
+
+		if selected == menuItemsStore.getRef("CHANGE_DEVICE"):
+			dialog =  changeDevice.Dialog()
+			dialog.Initialize()
+			if dialog.Show() == wx.ID_CANCEL:
+				return
+			globalVars.app.config["player"]["device"] = dialog.GetValue()
+			return
 
 		if selected==menuItemsStore.getRef("EXAMPLE"):
 			d = mkDialog.Dialog()

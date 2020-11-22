@@ -62,12 +62,13 @@ class Dialog(BaseDialog):
 		self.bgmResetButton.Disable()
 
 	def onAddFx(self, event):
-		dialog = wx.FileDialog(None, _("効果音追加"), style=wx.FD_OPEN)
+		dialog = wx.FileDialog(None, _("効果音追加"), style=wx.FD_OPEN | wx.FD_MULTIPLE)
 		if dialog.ShowModal() == wx.ID_CANCEL:
 			return
 		path = dialog.GetPath()
 		self.fxList.Append(os.path.basename(path))
 		self.fx.append(path)
+		return
 
 	def onInsertFx(self, event):
 		dialog = wx.FileDialog(None, _("効果音追加"), style=wx.FD_OPEN)
@@ -90,7 +91,27 @@ class Dialog(BaseDialog):
 	def onMenuSelect(self, event):
 		selected = event.GetId()
 		if selected == menuItemsStore.getRef("PAST_FX"):
-			print("")
+			self.pastFx()
+
+	def pastFx(self):
+		error = False
+		pos = self.fxList.Selection + 1
+		c=clipboard.ClipboardFile()
+		fileList = c.GetFileList()
+		if pos <= self.fxList.GetCount():
+			for path in fileList:
+				if os.path.isdir(path):error = True
+				self.fxList.Insert(os.path.basename(path), pos)
+				self.fx.insert(self.fxList.Selection, path)
+		else:
+			for path in fileList:
+				if os.path.isdir(path):error = True
+				self.fxList.Append(os.path.basename(path))
+				self.fx.append(path)
+		if error:
+			simpleDialog.errorDialog(_("ディレクトリが除外されました。"))
+		return
+
 
 	def load(self):
 		if self.seen.bgm is not None:
@@ -114,4 +135,4 @@ class Dialog(BaseDialog):
 		return
 
 	def GetData(self):
-		return None
+		return self.seen

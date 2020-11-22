@@ -3,7 +3,7 @@ from soundPlayer.constants import *
 import globalVars
 import time
 from soundPlayer import player
-
+from soundPlayer.constants import *
 class seen():
 	"""各シーンの情報が入ったクラス。
 	それぞれのシーンはbgmで分けられる。bgmが必要ないときはNoneを指定する。
@@ -37,6 +37,10 @@ class seen():
 		self.fx.insert(pos, path)
 
 	def start(self):
+		device = globalVars.app.config.getstring("player", "device", "default")
+		if device != "default":
+			globalVars.bgmPlayer.setDeviceByName(device)
+			globalVars.fxPlayer.setDeviceByName(device)
 		self.__started = True
 		if self.bgm == "":
 			return
@@ -53,6 +57,9 @@ class seen():
 		globalVars.bgmPlayer.play()
 
 	def stopBgm(self):
+		if globalVars.bgmPlayer.getStatus() == PLAYER_STATUS_PAUSED:
+			print("stoped")
+			return
 		if self.fadeOut:
 			while globalVars.bgmPlayer.setVolumeByDiff(-2):
 				time.sleep(0.07)
@@ -75,6 +82,7 @@ class seen():
 		self.stopBgm()
 		globalVars.bgmPlayer.exit()
 		globalVars.bgmPlayer = player.player()
+		globalVars.fxPlayer.stop()
 		self.__started = False
 		return
 

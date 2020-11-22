@@ -23,6 +23,9 @@ class DefaultSettings:
 			"sizeX": "800",
 			"sizeY": "600",
 		}
+		config["player"] = {
+			"device": "default",
+		}
 		return config
 
 initialValues={}
