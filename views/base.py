@@ -8,6 +8,7 @@ import wx
 
 import constants
 import defaultKeymap
+import errorCodes
 import globalVars
 import keymap
 import menuItemsStore
@@ -88,13 +89,11 @@ class BaseMenu(object):
 		self.hMenuBar=wx.MenuBar()
 		if keyFilter==None:
 			keyFilter=keymap.KeyFilter().SetDefault(False,True)
-		self.keymap=keymap.KeymapHandler(defaultKeymap.defaultKeymap, keyFilter)
+		self.keymap=keymap.KeymapHandler(None,keyFilter)
+		if self.keymap.addFile(constants.KEYMAP_FILE_NAME)!=errorCodes.OK:
+			self.keymap.addDict(defaultKeymap.defaultKeymap)
+			self.keymap.SaveFile(constants.KEYMAP_FILE_NAME)
 		self.keymap_identifier=identifier
-
-
-		self.keymap.filter=keyFilter
-
-		self.keymap.addFile(constants.KEYMAP_FILE_NAME)
 		errors=self.keymap.GetError(identifier)
 		if errors:
 			tmp=_(constants.KEYMAP_FILE_NAME+"で設定されたショートカットキーが正しくありません。キーの重複、存在しないキー名の指定、使用できないキーパターンの指定などが考えられます。以下のキーの設定内容をご確認ください。\n\n")
@@ -102,8 +101,6 @@ class BaseMenu(object):
 				tmp+=v+"\n"
 			dialog(_("エラー"),tmp)
 		self.acceleratorTable=self.keymap.GetTable(self.keymap_identifier)
-
-
 
 	def RegisterMenuCommand(self,menu_handle,ref_id,title="",subMenu=None,index=-1):
 		if type(ref_id)==dict:
