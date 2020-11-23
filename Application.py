@@ -2,6 +2,11 @@
 #Application startup file
 
 import sys
+import os
+#カレントディレクトリを設定
+if hasattr(sys,"frozen"): os.chdir(os.path.dirname(sys.executable))
+else: os.chdir(os.path.abspath(os.path.dirname(__file__)))
+
 import traceback
 
 def exchandler(type, exc, tb):
@@ -18,7 +23,6 @@ import win32timezone#ダミー
 def _(string): pass#dummy
 
 #dllを相対パスで指定した時のため、カレントディレクトリを変更
-import os
 
 
 
